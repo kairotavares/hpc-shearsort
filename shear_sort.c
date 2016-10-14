@@ -8,7 +8,6 @@
 #define FALSE 0
 #define TRUE  1
 
-#define END -1
 #define SEED 11235
 
 /*
@@ -445,8 +444,7 @@ void print_matrix(int len, int matrix[len][len], int id) {
 
 int main(int argc, char ** argv) {
 
-	int poolSize, rank, i, j;
-	int endValue = END;
+	int poolSize, rank;
 	double start, end;
 
 	MPI_Status status;
@@ -493,7 +491,6 @@ int main(int argc, char ** argv) {
 			if (masterChanged || slaveChanged) {
 				hasChange = TRUE;			
 			}
-			MPI_Barrier(MPI_COMM_WORLD);
 			receive_matrix(poolSize, matrixSize, matrix, matrixAuxSize, matrixAux);
 			print_matrix(matrixSize, matrix, rank);
 			MPI_Barrier(MPI_COMM_WORLD);
@@ -549,7 +546,6 @@ int main(int argc, char ** argv) {
 			// Step 1	 
 			hasChange = exchange_columns(rank, chunk, matrixSize, matrixAuxSize, matrixAux, TRUE);
 			send_changed_result_to_master(hasChange);
-			MPI_Barrier(MPI_COMM_WORLD);
 			send_matrix_to_master(matrixAuxSize, matrixAux);
 			MPI_Barrier(MPI_COMM_WORLD);
 			// Step 2	 
