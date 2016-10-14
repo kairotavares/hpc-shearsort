@@ -12,23 +12,21 @@
 #define SEED 11235
 
 /*
-########### MATRIX #########
+################ INPUT ################
 	13	10	12	 3
 	11	13	 7	14
 	 1	 0	13	 4
 	 9	 5	 0	 3
-############################
-*/
+########################################
 
-/*
-########### MATRIX #########
-	0	0	1	3
-	7	5	4	3
-	9	10   11   12
-	14   13   13   13
-############################
+Expected:
+################ OUTPUT ################
+	 0	0	1	3
+	 7	5	4	3
+	 9	10	11	12
+	14	13	13	13
+########################################
 */
-
 
 void populateMatrix(int n, int array[n][n]) {
 	srand(SEED);
@@ -44,7 +42,7 @@ void populateMatrix(int n, int array[n][n]) {
 *
 *  01 02 | 03 04
 *  05 06 | 07 08	   0 | 1
-*  -------------	=  -----  
+*  -------------        =  -----  
 *  09 10 | 11 12	   2 | 3
 *  13 14 | 15 16
 *
@@ -414,10 +412,10 @@ int receive_changed_status(int size) {
 }
 
 void receive_matrix(int size, 
-					int globalMatrixSize, 
-					int globalMatrix[globalMatrixSize][globalMatrixSize], 
-					int localMatrixSize,
-					int localMatrix[localMatrixSize][localMatrixSize]) {
+			int globalMatrixSize, 
+			int globalMatrix[globalMatrixSize][globalMatrixSize], 
+			int localMatrixSize,
+			int localMatrix[localMatrixSize][localMatrixSize]) {
 	
 	int i;
 	int receiveArray[localMatrixSize*localMatrixSize];
