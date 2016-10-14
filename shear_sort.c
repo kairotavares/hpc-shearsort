@@ -468,8 +468,8 @@ int main(int argc, char ** argv) {
 	populateMatrix(matrixSize, matrix);
 
 	if (rank == 0) {
-		printf("\n-------- STARTING --------\n"); fflush(stdout);		
-		print_matrix(matrixSize, matrix, rank);
+		//printf("\n-------- STARTING --------\n"); fflush(stdout);		
+		//print_matrix(matrixSize, matrix, rank);
 		copy_matrix_sector(matrixSize, matrix, matrixAuxSize, matrixAux, rank);
 	
 		do {
@@ -478,94 +478,94 @@ int main(int argc, char ** argv) {
 			slaveChanged = FALSE;
 
 			// Order lines
-			printf("\n--------  ORDER LINES WITH SHEAR SORT --------\n"); fflush(stdout);
+			//printf("\n--------  ORDER LINES WITH SHEAR SORT --------\n"); fflush(stdout);
 			shear_sort_lines(matrixAuxSize, matrixAux);
-			receive_matrix(poolSize, matrixSize, matrix, matrixAuxSize, matrixAux);
-			print_matrix(matrixSize, matrix, rank);
+			//receive_matrix(poolSize, matrixSize, matrix, matrixAuxSize, matrixAux);
+			//print_matrix(matrixSize, matrix, rank);
 			MPI_Barrier(MPI_COMM_WORLD);
 
 			// Exchange columns chunks
-			printf("\n-------- STEP 1 - EVEN --------\n"); fflush(stdout);				
+			//printf("\n-------- STEP 1 - EVEN --------\n"); fflush(stdout);				
 			masterChanged = exchange_columns(rank, chunk, matrixSize, matrixAuxSize, matrixAux, TRUE);
 			slaveChanged = receive_changed_status(poolSize);
 			if (masterChanged || slaveChanged) {
 				hasChange = TRUE;			
 			}
-			receive_matrix(poolSize, matrixSize, matrix, matrixAuxSize, matrixAux);
-			print_matrix(matrixSize, matrix, rank);
+			//receive_matrix(poolSize, matrixSize, matrix, matrixAuxSize, matrixAux);
+			//print_matrix(matrixSize, matrix, rank);
 			MPI_Barrier(MPI_COMM_WORLD);
 
-			printf("\n-------- STEP 2 - ODD --------\n"); fflush(stdout);				
+			//printf("\n-------- STEP 2 - ODD --------\n"); fflush(stdout);				
 			masterChanged = exchange_columns(rank, chunk, matrixSize, matrixAuxSize, matrixAux, FALSE);
 			slaveChanged = receive_changed_status(poolSize);
 			if (masterChanged || slaveChanged) {
 				hasChange = TRUE;			
 			}
-			receive_matrix(poolSize, matrixSize, matrix, matrixAuxSize, matrixAux);
-			print_matrix(matrixSize, matrix, rank);
+			//receive_matrix(poolSize, matrixSize, matrix, matrixAuxSize, matrixAux);
+			//print_matrix(matrixSize, matrix, rank);
 			MPI_Barrier(MPI_COMM_WORLD);
 		
 			// Order columns
-			printf("\n-------- ORDER COLUMNS WITH SHEAR SORT --------\n"); fflush(stdout);
+			//printf("\n-------- ORDER COLUMNS WITH SHEAR SORT --------\n"); fflush(stdout);
 			shear_sort_columns(matrixAuxSize, matrixAux);
-			receive_matrix(poolSize, matrixSize, matrix, matrixAuxSize, matrixAux);
-			print_matrix(matrixSize, matrix, rank);
+			//receive_matrix(poolSize, matrixSize, matrix, matrixAuxSize, matrixAux);
+			//print_matrix(matrixSize, matrix, rank);
 			MPI_Barrier(MPI_COMM_WORLD);
 
 			// Exchange line chunks
-			printf("\n-------- STEP 3 - EVEN --------\n"); fflush(stdout);				
+			//printf("\n-------- STEP 3 - EVEN --------\n"); fflush(stdout);				
 			masterChanged = exchange_lines(rank, chunk, matrixSize, matrixAuxSize, matrixAux, TRUE);
 			slaveChanged = receive_changed_status(poolSize);
 			if (masterChanged || slaveChanged) {
 				hasChange = TRUE;			
 			}
-			receive_matrix(poolSize, matrixSize, matrix, matrixAuxSize, matrixAux);
-			print_matrix(matrixSize, matrix, rank);
+			//receive_matrix(poolSize, matrixSize, matrix, matrixAuxSize, matrixAux);
+			//print_matrix(matrixSize, matrix, rank);
 			MPI_Barrier(MPI_COMM_WORLD);
 
-			printf("\n-------- STEP 4 - ODD --------\n"); fflush(stdout);				
+			//printf("\n-------- STEP 4 - ODD --------\n"); fflush(stdout);				
 			masterChanged = exchange_lines(rank, chunk, matrixSize, matrixAuxSize, matrixAux, FALSE);
 			slaveChanged = receive_changed_status(poolSize);
 			if (masterChanged || slaveChanged) {
 				hasChange = TRUE;			
 			}
-			receive_matrix(poolSize, matrixSize, matrix, matrixAuxSize, matrixAux);
-			print_matrix(matrixSize, matrix, rank);
+			//receive_matrix(poolSize, matrixSize, matrix, matrixAuxSize, matrixAux);
+			//print_matrix(matrixSize, matrix, rank);
 			MPI_Barrier(MPI_COMM_WORLD);
 
 			send_continue(poolSize, hasChange);
-
+			printf("."); fflush(stdout);
 		} while (hasChange);
 	} else {
 		copy_matrix_sector(matrixSize, matrix, matrixAuxSize, matrixAux, rank);		
 		while (TRUE) {
 			// Lines
 			shear_sort_lines(matrixAuxSize, matrixAux);
-			send_matrix_to_master(matrixAuxSize, matrixAux);
+			//send_matrix_to_master(matrixAuxSize, matrixAux);
 			MPI_Barrier(MPI_COMM_WORLD);
 			// Step 1	 
 			hasChange = exchange_columns(rank, chunk, matrixSize, matrixAuxSize, matrixAux, TRUE);
 			send_changed_result_to_master(hasChange);
-			send_matrix_to_master(matrixAuxSize, matrixAux);
+			//send_matrix_to_master(matrixAuxSize, matrixAux);
 			MPI_Barrier(MPI_COMM_WORLD);
 			// Step 2	 
 			hasChange = exchange_columns(rank, chunk, matrixSize, matrixAuxSize, matrixAux, FALSE);
 			send_changed_result_to_master(hasChange);
-			send_matrix_to_master(matrixAuxSize, matrixAux);
+			//send_matrix_to_master(matrixAuxSize, matrixAux);
 			MPI_Barrier(MPI_COMM_WORLD);
 			// Columns
 			shear_sort_columns(matrixAuxSize, matrixAux);
-			send_matrix_to_master(matrixAuxSize, matrixAux);
+			//send_matrix_to_master(matrixAuxSize, matrixAux);
 			MPI_Barrier(MPI_COMM_WORLD);
 			// Exchange line chunks
 			hasChange = exchange_lines(rank, chunk, matrixSize, matrixAuxSize, matrixAux, TRUE);
 			send_changed_result_to_master(hasChange);
-			send_matrix_to_master(matrixAuxSize, matrixAux);
+			//send_matrix_to_master(matrixAuxSize, matrixAux);
 			MPI_Barrier(MPI_COMM_WORLD);
 			// Exchange line chunks
 			hasChange = exchange_lines(rank, chunk, matrixSize, matrixAuxSize, matrixAux, FALSE);
 			send_changed_result_to_master(hasChange);
-			send_matrix_to_master(matrixAuxSize, matrixAux);
+			//send_matrix_to_master(matrixAuxSize, matrixAux);
 			MPI_Barrier(MPI_COMM_WORLD);
 
 			if (!can_continue()) {
@@ -578,7 +578,7 @@ int main(int argc, char ** argv) {
 
 	if(rank == 0) {
 		end = MPI_Wtime();
-		printf("Total Time = %.8f\n", end-start); fflush(stdout);
+		printf("\nTotal Time = %.8f\n", end-start); fflush(stdout);
 	}
 	
 	MPI_Finalize();
